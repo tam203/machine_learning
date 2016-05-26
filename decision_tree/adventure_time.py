@@ -57,7 +57,7 @@ print "We predicted %s out of %s correct, that's %s%%" % (sum(correct), len(corr
 # Try upping the tree depth and lowering the number of training examples to see the effect of over fitting.
 correct = []
 for s,r in zip(knightStats, battleResults):
-    p = tree.applyTree(battleTree, s)
+    p = tree.applyTree(battleTree,  s)
     correct.append(1-abs(r - p))
 print "`testting` against my training data I got %s out of %s correct, that's %s%%." % (sum(correct), len(correct), ((sum(correct)*100.0)/len(correct)))
 

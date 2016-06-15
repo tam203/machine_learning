@@ -16,8 +16,9 @@ def surface_data(xdata, ydata, zfunc, title="Chart", xlabel="X", ylabel="Y",opac
     }
 
 
-def make_chart(data, title="Chart", xlabel="x", ylabel="y" ,zlabel="z"):
-    file_path = os.path.abspath(os.path.join(OUT_DIR, str(uuid.uuid4()) + '.html'))
+def make_chart(data, title="Chart", xlabel="x", ylabel="y" ,zlabel="z", filepath=None):
+
+    file_path = os.path.abspath(os.path.join(OUT_DIR, str(uuid.uuid4()) + '.html')) if filepath is None else filepath
     with open(os.path.join(TMPLT_DIR, "template.html")) as infile:
         with open(file_path, 'w') as outfile:
             template = infile.read()

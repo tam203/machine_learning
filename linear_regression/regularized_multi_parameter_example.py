@@ -14,34 +14,56 @@ def hypothesis(x, Theta):
     return Theta[0] + sum((Theta[i + 1] * x[i] for i in xrange(len(x))))
 
 
-def cost(X, Y, Theta):
+def cost(X, Y, Theta, regularization_parameter):
+    """
+    The Regularization term penalizes higher order terms, this helps prevent over fitting.
+    If set to 0 this is the same as not regularizing as per the simple example
+    """
     guess = [hypothesis(x, Theta) for x in X]
-    return sum([(y - h) ** 2 for h, y in zip(guess, Y)]) / len(X)
+    fit_cost = sum(((y - h) ** 2 for h, y in zip(guess, Y))) / len(X)
+    reg_cost = regularization_parameter * sum((t*t for t in Theta[1:])) / len(x)
+    return fit_cost + reg_cost
 
 
-def partial_derivative(X, Y, Theta):
+def partial_derivative(X, Y, Theta, regularization_parameter):
+    """
+    The Regularization term penalizes higher order terms, this helps prevent over fitting.
+    If set to 0 this is the same as not regularizing as per the simple example
+    """
     delta = [0 for i in xrange(len(Theta))]
     delta[0] = sum([-(Y[i] - hypothesis(X[i], Theta)) for i in xrange(len(X))])
     for i, x in enumerate(X):
         for j, xj in enumerate(x):
-            delta[j + 1] -= xj * (Y[i] - hypothesis(x, Theta))
+            delta[j + 1] += -xj * (Y[i] - hypothesis(x, Theta)) + regularization_parameter*Theta[j+1]
 
     delta = [2 / len(X) * delta[i] for i in xrange(len(delta))]
 
     return delta
 
+
 alpha = 0.1  # Learning rate
-iterations = 20  # Number of training iterations
+reg_param = 0 # regularization_parameter
+iterations = 400  # Number of training iterations
+batching = len(X)//10
+batching = len(X) if batching < 1 or batching > len(X) else batching
+
+print "Train over %s examples with in batches of %s running %s iterations. Alpha=%s, Reg = %s" % (
+    len(X), batching, iterations, alpha, reg_param
+)
 
 history = []
 test_set_history = []
-history.append((0, cost(X, Y, Theta)))
-test_set_history.append((0, cost(X_test, Y_test, Theta)))
+history.append((0, cost(X, Y, Theta, reg_param)))
+test_set_history.append((0, cost(X_test, Y_test, Theta, reg_param)))
 
 for i in xrange(iterations):
-    delta_theta = partial_derivative(X, Y, Theta)
+    if batching < len(X):
+        holder = zip(X, Y)
+        random.shuffle(holder)
+        X,Y = zip(*holder)
+    delta_theta = partial_derivative(X[:batching], Y[:batching], Theta, reg_param)
     Theta = [theta - alpha * delta for theta, delta in zip(Theta, delta_theta)]
-    current_cost = cost(X, Y, Theta)
+    current_cost = cost(X, Y, Theta, reg_param)
     history.append((i + 1, current_cost))
     # test_set_history.append((i+1 , cost(X_test, Y_test, Theta)))
     if i % (iterations // 200 + 1) == 0:
@@ -54,9 +76,9 @@ print "Theta:\n%s" % ', '.join(("%.2f" % t for t in Theta))
 #
 # Validate and test the model
 #
-
-print "Test our trained model on some unseen data"
+print "Test"
 Y_test_predict = [hypothesis(x, Theta) for x in X_test]
+
 print "Five guesses:"
 guess_v_actual = zip(Y_test_predict, Y_test)
 random.shuffle(guess_v_actual)
@@ -76,9 +98,9 @@ chartting.open_chart(
                 xlabel="Iterations",
                 ylabel="Cost"))
 
-#
-# Leaning curve
-#
+
+
+
 # This analysis can help find out how to improve our mode. It take a while to run!:
 if False: # Disable if your not interested in the learning curve at this moment.
     train_cost = []
@@ -86,19 +108,19 @@ if False: # Disable if your not interested in the learning curve at this moment.
     num_data = []
     chart_filepath = None
 
-    def trainWithNExamples(n, itters=100):
+    def trainWithNExamples(n, reg_param, itters=100):
         X_subset = X[:n]
         Y_subset = Y[:n]
         T = [0 for i in xrange(len(X[0]) + 1)]
         for i in xrange(itters):
-            delta_theta = partial_derivative(X_subset, Y_subset, T)
+            delta_theta = partial_derivative(X_subset, Y_subset, T, reg_param)
             T = [theta - alpha * delta for theta, delta in zip(T, delta_theta)]
-        return cost(X_subset, Y_subset, T), T
+        return cost(X_subset, Y_subset, T, reg_param), T
 
 
     for i in xrange(1, 1001):
-        c, T = trainWithNExamples(i)
-        c_validation = cost(X_test, Y_test, T)
+        c, T = trainWithNExamples(i, reg_param)
+        c_validation = cost(X_test, Y_test, T, reg_param)
         train_cost.append(c)
         real_cost.append(c_validation)
         num_data.append(i)

@@ -14,7 +14,7 @@ PICKLE_FILES = [X_PICKLE, Y_PICKLE, XREF_PICKLE]
 KEY = os.environ['DATAPOINT_KEY']
 GET_ALL_URL = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/all?res=3hourly&key=" + KEY
 USE_PICKLED = True # To save pulling down from WOW and processing all the time we can use the pickle files we create if present.
-USE_ONE_IN_X_SITES = 10 # Up this number to reduce the amount of data your dealing with.
+USE_ONE_IN_X_SITES = 5 # Up this number to reduce the amount of data your dealing with.
 ORDER = 2
 
 

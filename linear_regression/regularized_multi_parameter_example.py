@@ -43,7 +43,7 @@ def partial_derivative(X, Y, Theta, regularization_parameter):
 
 alpha = 0.1  # Learning rate
 reg_param = 0 # regularization_parameter
-iterations = 400  # Number of training iterations
+iterations = 100  # Number of training iterations
 batching = len(X)//10
 batching = len(X) if batching < 1 or batching > len(X) else batching
 

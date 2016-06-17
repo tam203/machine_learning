@@ -14,7 +14,7 @@ PICKLE_FILES = [X_PICKLE, Y_PICKLE, XREF_PICKLE]
 KEY = os.environ['DATAPOINT_KEY']
 GET_ALL_URL = "http://datapoint.metoffice.gov.uk/public/data/val/wxfcs/all/json/all?res=3hourly&key=" + KEY
 USE_PICKLED = True # To save pulling down from WOW and processing all the time we can use the pickle files we create if present.
-USE_ONE_IN_X_SITES = 5 # Up this number to reduce the amount of data your dealing with.
+USE_ONE_IN_X_SITES = 10 # Up this number to reduce the amount of data your dealing with.
 ORDER = 2
 
 
@@ -56,6 +56,26 @@ def make_all_poly_terms(x, x_ref, order=1, x2=None, x2_ref=None):
     return make_all_poly_terms(x, x_ref, order=order - 1, x2=new_poly_terms, x2_ref=new_poly_terms_ref)
 
 
+def feature_scale(X, maxs, mins):
+    global X_REF_SHORT
+    for i, x in enumerate(X):
+        X[i] = [(x[j] - mins[j]) / (maxs[j] - mins[j]) for j in xrange(len(x))]
+    X_REF_SHORT = ["((%s) - %s)/(%s - %s)" % (X_REF_SHORT[j], mins[j], maxs[j], mins[j]) for j in xrange(len(X_REF_SHORT))]
+
+
+def apply_poly_and_get_min_max(X, order, refs):
+    for i, x in enumerate(X):
+        x, ref = make_all_poly_terms(x, x_ref=refs, order=order)
+        if i == 0:
+            mins = [x[k] for k in xrange(len(x))]
+            maxs = [x[k] for k in xrange(len(x))]
+        # While we are looping over the data anyway, get the max's and min's of each feature (such as T or T*H)
+        for j in xrange(len(x)):
+            maxs[j] = x[j] if x[j] > maxs[j] else maxs[j]
+            mins[j] = x[j] if x[j] < mins[j] else mins[j]
+        X[i] = x
+    return mins, maxs, ref
+
 if USE_PICKLED and all((os.path.exists(f) for f in PICKLE_FILES)):
     print("Using pickled data, skipping Datapoint and processing...")
     with open(X_PICKLE, 'r') as fp:
@@ -90,27 +110,13 @@ else:
                 Y.append(float(rep['F']))
 
 
-    # Make some poly nomial ters i.e T*T or T*H up to the order ORDER.
-    for i,x in enumerate(X):
-        x, ref = make_all_poly_terms(x, x_ref=X_REF_SHORT, order=ORDER)
-        if i == 0:
-            mins = [x[k] for k in range(len(x))]
-            maxs = [x[k] for k in range(len(x))]
-        # While we are looping over the data anyway, get the max's and min's of each feature (such as T or T*H)
-        for j in xrange(len(x)):
-            maxs[j] = x[j] if x[j] > maxs[j] else maxs[j]
-            mins[j] = x[j] if x[j] < mins[j] else mins[j]
-        X[i] = x
-    X_REF_SHORT = ref # Up date the reference with our new polynomial features.
+    # Make some polynomial terms i.e T*T or T*H up to the order ORDER.
+    mins, maxs, X_REF_SHORT = apply_poly_and_get_min_max(X, ORDER, X_REF_SHORT)
 
     # Feature scale. This makes all features between 0 and 1 with a mean of 0.5. Doing this
     # Prevents one feature from dominating the cost and so being unduly represented.
-    for i,x in enumerate(X):
-        X[i] = [(x[j] - mins[j])/(maxs[j] - mins[j]) for j in xrange(len(x))]
 
-    # Again update the refs with our scaling terms
-    X_REF_SHORT = ["((%s) - %s)/(%s - %s)" % (X_REF_SHORT[j], mins[j], maxs[j], mins[j]) for j in xrange(len(X_REF_SHORT))]
-
+    feature_scale(X, maxs, mins)
 
 # pickle the data for faster access in the future.
 with open(X_PICKLE, 'w') as fp:

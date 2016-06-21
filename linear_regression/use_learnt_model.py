@@ -24,9 +24,10 @@ if __name__ == "__main__":
 
     X, Y = datapoint.feels_like_temp_training_set()
 
-    for x in X[:10]:
-        print "for %s I predict %.1f" % (
+    for x,y in zip(X, Y)[:30]:
+        print "for %s I predict %4.1f correct answer %4.1f" % (
                 data_Set_to_str(x),
-                predict(prepare_data_for_model(x, poly_order, norm_terms), Theta))
+                predict(prepare_data_for_model(x, poly_order, norm_terms), Theta),
+                y)
 
 

@@ -1,5 +1,5 @@
-This is the code that accompanied a talk I gave on machine learning
-and decision trees. Run "adventure_time.py" to see it in action.
+# My Machine Learning talks, demos and experiments
 
+A place to dump my talks, demos and experiments with Machine Learning
 
-The rather sparse presentation notes "Machine Learning.pptx" are also in this repo.
+See `linear_regression` or `decision_tree` modules for and introduction to these concepts.

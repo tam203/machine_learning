@@ -55,10 +55,10 @@ if __name__ == '__main__':
     # Some set up params.
     alpha = 0.1  # Learning rate
     reg_param = 0  # regularization_parameter
-    iterations = 10  # Number of training iterations
+    iterations = 500  # Number of training iterations
     poly_order = 2 # Using 2 or higher means we will us polynomial terms such as x^2 or x*y allowing more complicated functions to be predicted..
-    data_set_size = 3000
-    DATA_SET = data_helpers.three_hourly_weather_data_set(poly_term_order=poly_order, max_total=data_set_size, no_cache=False)
+    data_set_size = 10000
+    DATA_SET = data_helpers.three_hourly_weather_data_set(poly_term_order=poly_order, max_total=data_set_size)
     X_train, Y_train = DATA_SET['train']
     batching = len(X_train) // 10  # If batching is > 0 and <= len(X_train) we effectively use staccato gradient descent.
     batching = len(X_train) if batching < 1 or batching > len(X_train) else batching

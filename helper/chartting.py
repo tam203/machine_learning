@@ -67,5 +67,8 @@ def scatter2d(x,y,name=None):
 
 
 def open_chart(chart):
+    """Opens a `chart` (a url) in the default browser"""
     print("Opening %s" % chart)
+    # This line probably doesn't work on linux. Changing "start" to "xdg-open" might.
+    # Else comment out and open manually.
     os.system("start %s" % chart)

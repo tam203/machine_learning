@@ -12,6 +12,15 @@ if os.environ.has_key('HTTP_PROXY'):
     urllib2.install_opener(opener)
 
 
+PARAM_INDEXES = {
+    "uv":0,
+    "temp":1,
+    "wind_speed":2,
+    "precip_prob":3,
+    "humidity":4,
+    "wind_gust":5
+}
+
 def feels_like_temp_training_set():
     X, Y = [], []
     print "Grabbing 3 hourly weather forecast from Met Office datapoint"

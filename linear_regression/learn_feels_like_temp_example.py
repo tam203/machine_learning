@@ -22,7 +22,7 @@ def cost(X, Y, Theta, regularization_parameter):
     """
     guess = [hypothesis(x, Theta) for x in X]
     fit_cost = sum(((y - h) ** 2 for h, y in zip(guess, Y))) / len(X)
-    reg_cost = regularization_parameter * sum((t*t for t in Theta[1:])) / len(x)
+    reg_cost = regularization_parameter * sum((t * t for t in Theta[1:])) / len(x)
     return fit_cost + reg_cost
 
 
@@ -35,7 +35,7 @@ def partial_derivative(X, Y, Theta, regularization_parameter):
     delta[0] = sum([-(Y[i] - hypothesis(X[i], Theta)) for i in xrange(len(X))])
     for i, x in enumerate(X):
         for j, xj in enumerate(x):
-            delta[j + 1] += -xj * (Y[i] - hypothesis(x, Theta)) + regularization_parameter*Theta[j+1]
+            delta[j + 1] += -xj * (Y[i] - hypothesis(x, Theta)) + regularization_parameter * Theta[j + 1]
 
     delta = [2 / len(X) * delta[i] for i in xrange(len(delta))]
 
@@ -44,15 +44,23 @@ def partial_derivative(X, Y, Theta, regularization_parameter):
 
 if __name__ == '__main__':
 
+    # The Met Office offer a `feels like temperature` forecast
+    # See https://blog.metoffice.gov.uk/2012/02/15/what-is-feels-like-temperature/
+    # We as an imaginary competitor we want to steel the algorithm for this.
+    # We will use multivariate linear regression to calculate an approximation for us.
+    # We will make the assumption that we can calculate feels like temperature based
+    # on the other parameters the the Met Office proved in it's 5 day forecast.
+
+
     # Some set up params.
     alpha = 0.1  # Learning rate
-    reg_param = 0 # regularization_parameter
+    reg_param = 0  # regularization_parameter
     iterations = 10  # Number of training iterations
-    poly_order = 2
+    poly_order = 2 # Using 2 or higher means we will us polynomial terms such as x^2 or x*y allowing more complicated functions to be predicted..
     data_set_size = 3000
-    DATA_SET = data_helpers.three_hourly_weather_data_set(poly_term_order=poly_order, max_total=data_set_size, no_cache=True)
+    DATA_SET = data_helpers.three_hourly_weather_data_set(poly_term_order=poly_order, max_total=data_set_size, no_cache=False)
     X_train, Y_train = DATA_SET['train']
-    batching = len(X_train) // 10
+    batching = len(X_train) // 10  # If batching is > 0 and <= len(X_train) we effectively use staccato gradient descent.
     batching = len(X_train) if batching < 1 or batching > len(X_train) else batching
 
     # Learning:
@@ -77,11 +85,11 @@ if __name__ == '__main__':
     print "Final cost is %.2f after %s iterations at learning rate %s" % (current_cost, iterations, alpha)
 
     # Learning can take time so save our learnt data for use later
-    pickle_Theta_file = os.path.join(TMP_DIR, "a%s_r%s_i%s_b%s_p%s_d%s.Theta_min_max.pickle" % (
-        alpha, reg_param, iterations, batching,  poly_order, data_set_size))
-    with open(pickle_Theta_file, 'w') as fp:
-        cPickle.dump((Theta, DATA_SET['norm_terms']), fp)
-
+    pickled_model_file = os.path.join(TMP_DIR, "a%s_r%s_i%s_b%s_p%s_d%s.Theta_min_max.pickle" % (
+        alpha, reg_param, iterations, batching, poly_order, data_set_size))
+    with open(pickled_model_file, 'w') as fp:
+        print "Saving learnt model (Theta, norm_terms, poly_order) to: %s" % pickled_model_file
+        cPickle.dump((Theta, DATA_SET['norm_terms'], poly_order), fp)
 
     # Validate and test the model
     print "Validate/test:"
@@ -100,22 +108,18 @@ if __name__ == '__main__':
     print "Show learning rate"
     chartting.open_chart(
             chartting.make_chart([
-                chartting.line2d(*zip(*cost_history_over_training), name="Training"),
-                # chartting.line2d(*zip(*test_set_history), name="Validation")
-            ],
-                    title="Learning rate",
+                chartting.line2d(*zip(*cost_history_over_training), name="Training")],
+                    title="Gradient descent cost v iterations",
                     xlabel="Iterations",
                     ylabel="Cost"))
 
-
-
-
-    # This analysis can help find out how to improve our mode. It take a while to run!:
-    if False: # Disable if your not interested in the learning curve at this moment.
+    # This analysis can help find out how to improve our mode. It take a while to run!.
+    if False:  # Disable if your not interested in the learning curve at this moment.
         train_cost = []
         real_cost = []
         num_data = []
         chart_filepath = None
+
 
         def trainWithNExamples(n, reg_param, itters=100):
             X_subset = X_train[:n]

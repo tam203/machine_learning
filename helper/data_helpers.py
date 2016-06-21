@@ -52,7 +52,7 @@ def three_hourly_weather_data_set(poly_term_order=2, max_total=0, no_cache=False
 
 
     # Split data in to training, model selection and testting sets. (Aprox 2/3 to 1/3)]
-    sixth_of_data = int(math.floor(2 * len(X) / 3))
+    sixth_of_data = int(math.floor(len(X) / 6))
     train_select_end_index = 4 * sixth_of_data
     model_select_end_index = train_select_end_index + sixth_of_data
 
@@ -65,7 +65,8 @@ def three_hourly_weather_data_set(poly_term_order=2, max_total=0, no_cache=False
         'train':train_data,
         'model_select':model_select_data,
         'test':test_data,
-        'norm_terms' : norm_terms
+        'norm_terms' : norm_terms,
+        'order': poly_term_order
     }
 
 

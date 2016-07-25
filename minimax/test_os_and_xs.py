@@ -125,3 +125,21 @@ class TestBoard(unittest.TestCase):
         clone = self.board.clone()
         clone.play(Board.X_PLAYER,0,0)
         self.assertIsNone(self.board.get()[0][0])
+
+    def test_game_over_on_win(self):
+        self.board.setup('XX \n'
+                         'OO \n'
+                         '   ')
+        self.board.play(self.board.X_PLAYER, 2, 0)
+        self.assertTrue(self.board.game_is_over())
+
+
+    def test_game_not_over_on_when_not_win(self):
+        self.assertFalse(self.board.game_is_over())
+        self.board.play(self.board.X_PLAYER, 0, 0)
+
+        self.assertFalse(self.board.game_is_over())
+        self.board.play(self.board.O_PLAYER, 1, 0)
+
+        self.assertFalse(self.board.game_is_over())
+        self.board.play(self.board.X_PLAYER, 2, 0)

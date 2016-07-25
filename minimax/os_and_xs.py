@@ -6,6 +6,7 @@ class Board(object):
     bord = None
     X_PLAYER = 1
     O_PLAYER = 0
+    winner = None
 
     def __init__(self):
         self.board = [
@@ -37,6 +38,8 @@ class Board(object):
         win = win or all(self.board[x][y] == player for x, y in ((0, 0), (1, 1), (2, 2)))
         win = win or all(self.board[x][y] == player for x, y in ((0, 2), (1, 1), (2, 0)))
 
+        if win:
+            self.winner = player
         return player if win else -1
 
     def setup(self, grid):
@@ -65,3 +68,8 @@ class Board(object):
         clone.board = copy.deepcopy(self.board)
         clone.last_player = self.last_player
         return clone
+
+    def game_is_over(self):
+        someone_has_won = self.winner is not None
+        any_move_left = len(self.avaliable_moves()) > 0
+        return someone_has_won or not any_move_left

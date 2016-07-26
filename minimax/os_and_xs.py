@@ -1,12 +1,11 @@
 import copy
 
 
-class Board(object):
+class XsAndOs(object):
     last_player = None
     bord = None
     X_PLAYER = 1
     O_PLAYER = 0
-    winner = None
 
     def __init__(self):
         self.board = [
@@ -31,16 +30,22 @@ class Board(object):
         self.board[col][row] = player
         self.last_player = player
 
-        win = False
-        for x in xrange(3):
-            win = win or all(self.board[x][y] == player for y in xrange(3))  # check rows
-            win = win or all(self.board[y][x] == player for y in xrange(3))  # check cols
-        win = win or all(self.board[x][y] == player for x, y in ((0, 0), (1, 1), (2, 2)))
-        win = win or all(self.board[x][y] == player for x, y in ((0, 2), (1, 1), (2, 0)))
+        winner = self.get_winner()
+        return winner if winner is not None else -1
 
-        if win:
-            self.winner = player
-        return player if win else -1
+    def get_winner(self):
+        winner = None
+        for player in (self.X_PLAYER, self.O_PLAYER):
+            win = False
+            for x in xrange(3):
+                win = win or all(self.board[x][y] == player for y in xrange(3))  # check rows
+                win = win or all(self.board[y][x] == player for y in xrange(3))  # check cols
+            win = win or all(self.board[x][y] == player for x, y in ((0, 0), (1, 1), (2, 2)))
+            win = win or all(self.board[x][y] == player for x, y in ((0, 2), (1, 1), (2, 0)))
+            if win:
+                winner = player
+                break
+        return winner
 
     def setup(self, grid):
         player_o_no_goes = 0
@@ -60,16 +65,16 @@ class Board(object):
         else:
             self.last_player = None
 
-    def avaliable_moves(self):
-        return ([(x,y) for x in xrange(3) for y in xrange(3) if self.board[x][y] is None])
+    def available_moves(self):
+        return [(x, y) for x in xrange(3) for y in xrange(3) if self.board[x][y] is None]
 
     def clone(self):
-        clone = Board()
+        clone = XsAndOs()
         clone.board = copy.deepcopy(self.board)
         clone.last_player = self.last_player
         return clone
 
     def game_is_over(self):
-        someone_has_won = self.winner is not None
-        any_move_left = len(self.avaliable_moves()) > 0
+        someone_has_won = self.get_winner() is not None
+        any_move_left = len(self.available_moves()) > 0
         return someone_has_won or not any_move_left

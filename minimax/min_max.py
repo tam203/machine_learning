@@ -1,18 +1,18 @@
-from minimax.os_and_xs import Board
+from minimax.os_and_xs import XsAndOs
 
-PLAYER = Board.X_PLAYER
-OPPONENT = Board.O_PLAYER
+PLAYER = XsAndOs.X_PLAYER
+OPPONENT = XsAndOs.O_PLAYER
 
 
 def board_score(board, player):
-    if board.winner is not None:
-        return 10 if board.winner == player else -10
+    if board.get_winner() is not None:
+        return 10 if board.get_winner() == player else -10
     return 0
 
 
 def pick_move(board, player=PLAYER, max_depth=100):
     options = []
-    available_moves = board.avaliable_moves()
+    available_moves = board.available_moves()
     if len(available_moves) == 1:
         future_board = board.clone()
         future_board.play(player, *available_moves[0])

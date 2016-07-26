@@ -5,7 +5,7 @@ from os_and_xs import *
 
 class TestBoard(unittest.TestCase):
     def setUp(self):
-        self.board = Board()
+        self.board = XsAndOs()
 
     def test_is_3_by_3(self):
         self.assertEqual(len(self.board.get()), 3)
@@ -59,24 +59,27 @@ class TestBoard(unittest.TestCase):
         self.board.setup('   \n0  \nX  ')
         self.assertEqual(self.board.last_player, None)
 
-    def test_a_win_returns_winning_player(self):
+    def test_get_winner_returns_the_winning_player(self):
         # test horizontal
         self.board.setup('XX \n'
                          'OO \n'
                          '   ')
-        self.assertEqual(self.board.X_PLAYER, self.board.play(self.board.X_PLAYER, 2, 0))
+        self.board.play(self.board.X_PLAYER, 2, 0)
+        self.assertEqual(self.board.X_PLAYER, self.board.get_winner())
 
         # Test vertical
         self.board.setup('OXX\n'
                          'OXX\n'
                          ' O ')
-        self.assertEqual(self.board.O_PLAYER, self.board.play(self.board.O_PLAYER, 0, 2))
+        self.board.play(self.board.O_PLAYER, 0, 2)
+        self.assertEqual(self.board.O_PLAYER, self.board.get_winner())
 
         # Test diagonal
         self.board.setup('XOO\n'
                          'OXX\n'
                          'XO ')
-        self.assertEqual(self.board.X_PLAYER, self.board.play(self.board.X_PLAYER, 2, 2))
+        self.board.play(self.board.X_PLAYER, 2, 2)
+        self.assertEqual(self.board.X_PLAYER, self.board.get_winner())
 
     def test_non_win_returns_neg_1(self):
         self.board.setup('XX0\n'
@@ -109,7 +112,7 @@ class TestBoard(unittest.TestCase):
         self.board.setup('X 0\n'
                          '  X\n'
                          'X O')
-        moves = self.board.avaliable_moves()
+        moves = self.board.available_moves()
         self.assertEqual(len(moves), 4)
         for test_move in ((1,0), (1,1), (0,1), (1,2)):
             self.assertIn(test_move,moves)
@@ -123,7 +126,7 @@ class TestBoard(unittest.TestCase):
 
     def test_clone_doesnt_mutate_orig(self):
         clone = self.board.clone()
-        clone.play(Board.X_PLAYER,0,0)
+        clone.play(XsAndOs.X_PLAYER, 0, 0)
         self.assertIsNone(self.board.get()[0][0])
 
     def test_game_over_on_win(self):

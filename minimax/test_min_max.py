@@ -1,3 +1,4 @@
+import os
 import unittest
 
 import datetime
@@ -75,7 +76,7 @@ class TestMiniMax(unittest.TestCase):
         move, score = pick_move(board, PLAYER)
         self.assertIn(move, ((1, 1), (2, 2)))
 
-
+    @unittest.skipIf(not os.environ.get("FULL_TEST", "FALSE").upper() == "TRUE", "Only run if env var FULL_TEST == TRUE")
     def test_a_xs_and_os_game_against_self_is_a_draw(self):
         xs_and_os_board = XsAndOs()
         for i in xrange(9): # A drawn game will always have 9 moves
@@ -86,15 +87,17 @@ class TestMiniMax(unittest.TestCase):
         self.assertIsNone(xs_and_os_board.get_winner())
 
 
+
+    @unittest.skipIf(not os.environ.get("FULL_TEST", "FALSE").upper() == "TRUE", "Only run if env var FULL_TEST == TRUE")
     def test_a_connect_4_game_against_self_is_a_draw(self):
         connect_4_board = Connect4()
         for i in xrange(7*6): # A drawn game will always have 7*6 moves
             player = PLAYER if i % 2 == 0 else OPPONENT
-            move, score = pick_move(connect_4_board, player, 4)
+            move, score = pick_move(connect_4_board, player, 5)
             connect_4_board.play(player, *move)
             print(connect_4_board)
             print
+            self.assertIsNone(connect_4_board.get_winner())
 
-        self.assertIsNone(connect_4_board.get_winner())
 
 

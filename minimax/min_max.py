@@ -1,3 +1,5 @@
+import random
+
 from minimax.os_and_xs import XsAndOs
 
 PLAYER = XsAndOs.X_PLAYER
@@ -18,6 +20,7 @@ def pick_move(board, player=PLAYER, max_depth=100):
         future_board.play(player, *available_moves[0])
         return available_moves[0], board_score(future_board, player)
 
+    random.shuffle(available_moves)
     for move in available_moves:
         future_board = board.clone()
         future_board.play(player, *move)
@@ -34,7 +37,6 @@ def pick_move(board, player=PLAYER, max_depth=100):
             score = -opponent_score
 
         options.append({'move': move, 'score': score})
-
     move_to_make = sorted(options, key=lambda o: o['score'], reverse=True)[0]
 
     return move_to_make['move'], move_to_make['score']

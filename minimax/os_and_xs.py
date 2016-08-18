@@ -14,6 +14,15 @@ class XsAndOs(object):
             [None, None, None]
         ]
 
+    def __str__(self):
+        lines = []
+        for row in xrange(3):
+            line = ''
+            for col in xrange(3):
+                line += {self.X_PLAYER:'X', self.O_PLAYER:'O'}.get(self.board[col][row], ' ')
+            lines.append(line)
+        return '\n'.join(lines)
+
     def get(self):
         return self.board
 

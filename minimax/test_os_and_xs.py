@@ -51,6 +51,17 @@ class TestBoard(unittest.TestCase):
         self.assertEqual(self.board.get()[1], [0, 1, 1])
         self.assertEqual(self.board.get()[2], [0, 0, None])
 
+    def test_to_str(self):
+
+        for setup in (
+                'XOO\n OO\nXX ',
+                'OOO\nXXX\n   ',
+                '   \n   \n   ',
+                '   \n X \n   '
+        ):
+            self.board.setup(setup)
+            self.assertEqual(str(self.board), setup)
+
     def test_set_up_deduces_correct_last_player(self):
         self.board.setup('XX0\n   \n   ')
         self.assertEqual(self.board.last_player, 1)

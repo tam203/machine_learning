@@ -107,7 +107,9 @@ if __name__ == '__main__':
         print(game)
         if game.get_winner():
             break
-        move, score = min_max.pick_move(game, RED_PLAYER, 5)
+        move, score = min_max.pick_move(game, RED_PLAYER, 6)
         game.play(RED_PLAYER, *move)
 
+
+    print(game)
     print "The winner is %s" % {YELLOW_PLAYER: "You", RED_PLAYER: "CPU"}.get(game.get_winner(), "No one!")

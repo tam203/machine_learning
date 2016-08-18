@@ -52,6 +52,17 @@ class TestMiniMax(unittest.TestCase):
         move, score = pick_move(board, PLAYER)
         self.assertEqual(list(move), [2, 2])
 
+        board = XsAndOs()
+        board.setup('  X\n'
+                    '   \n'
+                    'O X')
+        move, score = pick_move(board, board.O_PLAYER)
+        print move
+        print score
+        self.assertEqual(list(move), [2, 1])
+
+
+
     def test_max_depth(self):
         mock_board = XsAndOs()
 
@@ -81,9 +92,11 @@ class TestMiniMax(unittest.TestCase):
         xs_and_os_board = XsAndOs()
         for i in xrange(9): # A drawn game will always have 9 moves
             player = PLAYER if i % 2 == 0 else OPPONENT
-            move, score = pick_move(xs_and_os_board, player, 3) # 3 is enough look ahead to force draw but not slow down too much.
+            move, score = pick_move(xs_and_os_board, player)
             xs_and_os_board.play(player, *move)
-
+            print '___'
+            print(xs_and_os_board)
+            print '^^^\n\n'
         self.assertIsNone(xs_and_os_board.get_winner())
 
 

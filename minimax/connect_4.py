@@ -12,12 +12,12 @@ class Connect4(object):
     HEIGHT = 6
     winner = None
 
-    def __init__(self, set_up=None):
+    def __init__(self, set_up=None, board=None):
         def str_to_player(cell_str):
             return {'Y': YELLOW_PLAYER, 'R': RED_PLAYER}.get(cell_str.upper(), None)
 
         # 7 across 6 down grid.
-        self.board = [[None for x in xrange(6)] for y in (xrange(self.WIDTH))]
+        self.board = board if board else [[None for x in xrange(6)] for y in (xrange(self.WIDTH))]
 
         if set_up:
             moves = [[str_to_player(cell) for cell in row.strip()[1:-1].split('|')] for row in set_up.split('\n')]
@@ -88,8 +88,8 @@ class Connect4(object):
         return '\n'.join(reversed(rows))
 
     def clone(self):
-        clone = Connect4()
-        clone.board = [[self.board[x][y] for y in xrange(self.HEIGHT)] for x in (xrange(self.WIDTH))]
+        clone = Connect4(board=[[self.board[x][y] for y in xrange(self.HEIGHT)] for x in (xrange(self.WIDTH))] )
+        #clone.board = [[self.board[x][y] for y in xrange(self.HEIGHT)] for x in (xrange(self.WIDTH))]
         return clone
 
 

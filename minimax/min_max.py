@@ -1,3 +1,4 @@
+import atexit
 import os
 import random
 
@@ -44,7 +45,6 @@ def board_score(board, player):
 
 def pick_move(board, player, max_depth=100):
     move, score = _get_best_move(board, player, max_depth) if len(board.available_moves()) > 0 else (None, None)
-    write_to_cache()
     return move, score
 
 def hash_game(board, player):
@@ -96,3 +96,6 @@ def _get_best_move(board, player=PLAYER, max_depth=100):
 
 
 _move_lookup = read_lookup_from_cache()
+
+
+atexit.register(write_to_cache)

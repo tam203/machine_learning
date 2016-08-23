@@ -89,8 +89,7 @@ class Connect4(object):
 
     def clone(self):
         clone = Connect4()
-        clone.board = copy.deepcopy(self.board)
-
+        clone.board = [[self.board[x][y] for y in xrange(self.HEIGHT)] for x in (xrange(self.WIDTH))]
         return clone
 
 
@@ -98,8 +97,8 @@ if __name__ == '__main__':
     game = Connect4()
     print "You are yellow (Y)"
     while game.get_winner() is None:
-        print()
-        print()
+        print
+        print
         print '|' + '|'.join((str(i) for i in xrange(Connect4.WIDTH))) + '|'
         print(game)
         col = raw_input('Pick col:')

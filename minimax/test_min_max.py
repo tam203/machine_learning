@@ -49,19 +49,19 @@ class TestMiniMax(unittest.TestCase):
         board.setup(' x \n'
                     '   \n'
                     'oo ')
-        move, score = pick_move(board, PLAYER)
+        move, score = pick_move(board, board.X_PLAYER)
         self.assertEqual(list(move), [2, 2])
 
+
+    def test_any_caching_takes_account_of_current_player(self):
         board = XsAndOs()
-        board.setup('  X\n'
+        board.setup('xx \n'
                     '   \n'
-                    'O X')
+                    'oo ')
         move, score = pick_move(board, board.O_PLAYER)
-        print move
-        print score
-        self.assertEqual(list(move), [2, 1])
-
-
+        self.assertEqual(list(move), [2, 2])
+        move, score = pick_move(board, board.X_PLAYER)
+        self.assertEqual(list(move), [2, 0])
 
     def test_max_depth(self):
         mock_board = XsAndOs()
@@ -106,7 +106,7 @@ class TestMiniMax(unittest.TestCase):
         connect_4_board = Connect4()
         for i in xrange(7*6): # A drawn game will always have 7*6 moves
             player = PLAYER if i % 2 == 0 else OPPONENT
-            move, score = pick_move(connect_4_board, player, 5)
+            move, score = pick_move(connect_4_board, player, 7)
             connect_4_board.play(player, *move)
             print(connect_4_board)
             print

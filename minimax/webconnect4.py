@@ -88,7 +88,7 @@ def Con4View(game):
                     <input id="game"  type="hidden" name="game" value="%GAME%"/>
                     <input type="submit" name="Play" value="Play" />
                 </form>
-                <a href="/play">Restart/play again</a>
+                <a href="">Restart/play again</a>
             </body>
         </html>
     """
